@@ -57,9 +57,6 @@ def get_min_max_by_time(hour=None, minute=None):
     if hour >= 12:
         min_val = max(8000, min_val)
         max_val = max(max_val, min_val)
-        # 随机生成步数
-        min_val = random.randint(min_val, max_val)
-        max_val = min_val  # 如果只需要一个随机值，也可以把 min/max 都设为随机值
 
     return min_val, max_val
 
