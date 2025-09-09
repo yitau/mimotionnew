@@ -2,7 +2,7 @@ name: 刷步数
 
 on:
   schedule:
-    - cron: '9 1,4,7,10,12,14 * * *'
+    - cron: '40 2 * * *'
   workflow_dispatch:
 
 jobs:
@@ -28,3 +28,13 @@ jobs:
         run: |
           pip3 install requests pytz
           python3 main.py
+
+      - name: Send Bark Notification
+        env:
+          BARK_SERVER_URL: ${{ secrets.BARK_SERVER_URL }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+        run: |
+          URLS=$(echo "${{ steps.prepare_urls.outputs.urls }}" | tr ',' '\n')
+          TITLE="Xiao Mi Step Done"
+          # 构建完整 URL 并发送请求
+          curl -X GET "${BARK_SERVER_URL}/${BARK_KEY}/${TITLE}"
