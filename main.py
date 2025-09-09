@@ -37,10 +37,28 @@ def get_min_max_by_time(hour=None, minute=None):
         hour = time_bj.hour
     if minute is None:
         minute = time_bj.minute
-    time_rate = min((hour * 60 + minute) / (17 * 60), 1)
-    min_step = get_int_value_default(config, 'MIN_STEP', 18000)
-    max_step = get_int_value_default(config, 'MAX_STEP', 25000)
-    return int(time_rate * min_step), int(time_rate * max_step)
+
+    # 线性比例 9~17点
+    if hour <= 9:
+        time_rate = 0
+    elif hour >= 17:
+        time_rate = 1
+    else:
+        time_rate = (hour + minute/60 - 9) / (17 - 9)
+
+    # 计算步数区间
+    min_val = int(time_rate * min_step)
+    max_val = int(time_rate * max_step)
+
+    # 12点随机步数，保证 ≥8000
+    if hour >= 12:
+        min_val = max(8000, min_val)
+        max_val = max(max_val, min_val)
+        # 随机生成步数
+        min_val = random.randint(min_val, max_val)
+        max_val = min_val  # 如果只需要一个随机值，也可以把 min/max 都设为随机值
+
+    return min_val, max_val
 
 
 # 虚拟ip地址
