@@ -1,6 +1,8 @@
 name: 刷步数
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     - cron: '40 2 * * *'
   workflow_dispatch:
@@ -16,11 +18,6 @@ jobs:
         run: |
           sudo dnf -y update
           sudo dnf -y install zsh
-          
-      - name: 初始化Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.8
           
       - name: 开始
         env:
