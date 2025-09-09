@@ -49,6 +49,8 @@ def get_min_max_by_time(hour=None, minute=None):
     min_step = get_int_value_default(config, 'MIN_STEP', 18000)
     max_step = get_int_value_default(config, 'MAX_STEP', 25000)
 
+    print(hour, time_rate, min_step, max_step)
+
     # 计算步数区间
     min_val = int(time_rate * min_step)
     max_val = int(time_rate * max_step)
