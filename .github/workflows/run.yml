@@ -22,10 +22,18 @@ jobs:
             CONFIG: ${{ secrets.CONFIG }}
         run: |
           pip3 install requests pytz
-          # 捕获 Python 脚本输出
-          OUTPUT=$(python3 main.py)
+          # 运行 python 并保存输出
+          python3 main.py | tee output.log
+          
+          # 捕获输出
+          OUTPUT=$(cat output.log)
+
+          # 调试用：打印出来确认是否为空
+          echo "===DEBUG Python OUTPUT==="
           echo "$OUTPUT"
-          # 用多行写法安全传递
+          echo "=========================="
+
+          # 用多行写法传递
           {
             echo "result<<EOF"
             echo "$OUTPUT"
@@ -39,6 +47,6 @@ jobs:
         run: |
           TITLE="Xiao Mi Step Done"
           MESSAGE="${{ steps.run_py.outputs.result }}"
-          # URL 编码防止中文/空格报错
+          echo "DEBUG MESSAGE=$MESSAGE"   # 调试用，看看是不是空
           MESSAGE_ENCODED=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MESSAGE")
           curl -X GET "${BARK_SERVER_URL}/${BARK_KEY}/${TITLE}/${MESSAGE_ENCODED}"
