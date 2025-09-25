@@ -25,18 +25,9 @@ jobs:
           pip3 install requests pytz
           # 运行 python 并保存输出
           python3 main.py | tee output.log
-          
-          # 捕获输出
-          OUTPUT=$(cat output.log)
-
-          # 调试用：打印出来确认是否为空
-          echo "===DEBUG Python OUTPUT==="
-          echo "$OUTPUT"
-          echo "=========================="
 
           # 取最后一行
           LAST_LINE=$(tail -n 1 output.log)
-
           echo "DEBUG LAST_LINE=$LAST_LINE"
 
           # 用多行写法安全传递
