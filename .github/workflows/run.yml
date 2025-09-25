@@ -22,11 +22,15 @@ jobs:
             CONFIG: ${{ secrets.CONFIG }}
         run: |
           pip3 install requests pytz
-          # 捕获 Python 脚本的输出
+          # 捕获 Python 脚本输出
           OUTPUT=$(python3 main.py)
           echo "$OUTPUT"
-          # 传递给下一个 step 使用
-          echo "result=$OUTPUT" >> $GITHUB_OUTPUT
+          # 用多行写法安全传递
+          {
+            echo "result<<EOF"
+            echo "$OUTPUT"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Send Bark Notification
         env:
@@ -35,6 +39,6 @@ jobs:
         run: |
           TITLE="Xiao Mi Step Done"
           MESSAGE="${{ steps.run_py.outputs.result }}"
-          # 注意 Bark API 需要 URL 编码
+          # URL 编码防止中文/空格报错
           MESSAGE_ENCODED=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$MESSAGE")
           curl -X GET "${BARK_SERVER_URL}/${BARK_KEY}/${TITLE}/${MESSAGE_ENCODED}"
